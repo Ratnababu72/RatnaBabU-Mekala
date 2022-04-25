@@ -1,0 +1,36 @@
+
+from bs4 import BeautifulSoup
+import requests
+import os
+
+html_text = requests.get("https://www.flipkart.com/search?q=redmi+mobile&sid=tyy%2C4io&as=on&as-show=on&otracker=AS_QueryStore_OrganicAutoSuggest_2_5_na_na_na&otracker1=AS_QueryStore_OrganicAutoSuggest_2_5_na_na_na&as-pos=2&as-type=HISTORY&suggestionId=redmi+mobile%7CMobiles&requestId=87874985-1d16-4ca2-b605-1216f499fdee=on")
+soup = BeautifulSoup(html_text.text, "lxml")
+res = soup.findAll("div", class_= "_3pLy-c row")
+html ="<center>"
+html +="<h1>"+"Redmi Mobile Table"+"</h1>"
+html += f'<table border={1}>'
+html += "<tr>"
+html += "<th>" + "Mobile Name" +"</th>"
+html += "<th>" + "Price" + "</th>"
+html += "<th>" + "Rating" + "</th>"
+html += "<th>" + "Offer" + "</th>"
+html += "</tr>"
+html += "<tr>"
+for result in res:
+    prod = result.find("div", class_="_4rR01T").text
+    price = result.find("div", class_="_30jeq3 _1_WHN1").text
+    rating = result.find("div",class_="_3LWZlK").text
+    offer = result.find("div",class_="_3Ay6Sb").find("span").text
+
+    # print(rating,prod,price,offer)
+    html += "<td>" + prod + "</td>"
+    html += "<td>" + price + "</td>"
+    html += "<td>" + rating + "</td>"
+    html += "<td>" + offer + "</td>"
+    html += "</tr>"
+html += "</table>"
+html +="</center>"
+with open("outpt.html", "w", encoding='utf-8') as file:
+    file.write(html)
+
+os.startfile('outpt.html')
